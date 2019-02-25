@@ -1,0 +1,152 @@
+PRE-SCRIPT INFO
+  Grading Script PID: 48305
+  Note: your smallsh will report a different PID when evaluating $$
+: BEGINNING TEST SCRIPT
+: 
+: --------------------
+: Using comment (5 points if only next prompt is displayed next)
+: #THIS COMMENT SHOULD DO NOTHING
+: 
+: 
+: --------------------
+: ls (10 points for returning dir contents)
+: Assignment3.zip
+junk
+junk2
+makefile
+mytestresults
+p3testscript
+readme.txt
+smallsh
+smallsh.c
+: 
+: 
+: --------------------
+: ls out junk
+: : 
+: 
+: --------------------
+: cat junk (15 points for correctly returning contents of junk)
+: Assignment3.zip
+junk
+junk2
+makefile
+mytestresults
+p3testscript
+readme.txt
+smallsh
+smallsh.c
+: 
+: 
+: --------------------
+: wc in junk (15 points for returning correct numbers from wc)
+:  9  9 92
+: 
+: 
+: --------------------
+: wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc)
+: :  9  9 92
+: 
+: 
+: --------------------
+: test -f badfile (10 points for returning error value of 1, note extraneous )
+: : Background process ID: 48344
+: 
+Bad command!
+: No such file or directory
+Exit Code: -1
+: Background process PID:48344
+Terminated with error code: 0
+
+: --------------------
+: wc in badfile (10 points for returning text error)
+: BAD FILENAME, Does not exist
+wc: badfile: No such file or directory
+: 
+: 
+: --------------------
+: badfile (10 points for returning text error)
+: Bad command!
+: No such file or directory
+Exit Code: -1
+: 
+: 
+: --------------------
+: sleep 100 background (10 points for returning process ID of sleeper)
+: Background process ID: 48359
+: 
+: 
+: --------------------
+: pkill -signal SIGTERM sleep (10 points for pid of killed process, 10 points for signal)
+: (Ignore message about Operation Not Permitted)
+: pkill: killing pid 712 failed: Operation not permitted
+pkill: killing pid 6730 failed: Operation not permitted
+pkill: killing pid 7425 failed: Operation not permitted
+pkill: killing pid 11270 failed: Operation not permitted
+pkill: killing pid 12650 failed: Operation not permitted
+pkill: killing pid 17475 failed: Operation not permitted
+pkill: killing pid 18946 failed: Operation not permitted
+pkill: killing pid 19014 failed: Operation not permitted
+pkill: killing pid 22315 failed: Operation not permitted
+pkill: killing pid 35679 failed: Operation not permitted
+pkill: killing pid 39143 failed: Operation not permitted
+pkill: killing pid 48041 failed: Operation not permitted
+pkill: killing pid 48298 failed: Operation not permitted
+: Background process PID:48359
+Terminated with error code: 15
+
+: 
+: --------------------
+: sleep 1 background (10 pts for pid of bg ps when done, 10 for exit value)
+: Background process ID: 48371
+: : Background process PID:48371
+Terminated with error code: 0
+
+: 
+: --------------------
+: pwd
+: /nfs/stak/users/decleenz/cs344/Assignment3
+: 
+: 
+: --------------------
+: cd
+: : 
+: 
+: --------------------
+: pwd (10 points for being in the HOME dir)
+: /nfs/stak/users/decleenz
+: 
+: 
+: --------------------
+: mkdir testdir48306
+echo mkdir testdir48306
+
+: mkdir testdir48306
+
+: 
+: 
+: --------------------
+: cd testdir48306
+echo cd testdir48306
+
+: No child processes
+cd testdir48306
+
+: 
+: 
+: --------------------
+: pwd (5 points for being in the newly created dir)
+: /nfs/stak/users/decleenz/testdir48306
+: --------------------
+: Testing foreground-only mode (20 points for entry exit text AND ~5 seconds between times)
+: 
+Entering foreground-only mode.
+kill -SIGTSTP 48306
+
+: Wed Mar  7 23:19:57 PST 2018
+: : Wed Mar  7 23:20:02 PST 2018
+: 
+Exiting foreground-only mode.
+kill -SIGTSTP 48306
+
+: 

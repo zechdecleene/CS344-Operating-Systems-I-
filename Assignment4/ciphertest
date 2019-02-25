@@ -1,0 +1,33 @@
+GNU gdb (GDB) Red Hat Enterprise Linux 7.6.1-100.el7
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /nfs/stak/users/decleenz/cs344/Assignment4/otp_enc...done.
+[?1034h(gdb) 
+(gdb) runc^C(gdb) run
+Starting program: /nfs/stak/users/decleenz/cs344/Assignment4/otp_enc plaintext2 key700
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff7a51d67 in ____strtoll_l_internal () from /lib64/libc.so.6
+Missing separate debuginfos, use: debuginfo-install glibc-2.17-196.el7_4.2.x86_64
+(gdb) ^C(gdb) ^C(gdb) ^C(gdb) ^C(gdb) ^C(gdb) ^C(gdb) ^C(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 26769] will be killed.
+
+Quit anyway? (y or n) Please answer y or n.
+A debugging session is active.
+
+	Inferior 1 [process 26769] will be killed.
+
+Quit anyway? (y or n) Please answer y or n.
+A debugging session is active.
+
+	Inferior 1 [process 26769] will be killed.
+
+Quit anyway? (y or n) EOF [assumed Y]

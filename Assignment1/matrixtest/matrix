@@ -1,0 +1,581 @@
+#!/bin/bash
+#echo "Beginning of script"
+#echo "Argument 1: $1"
+
+numCols=0
+numRows=0
+
+#Get initial argument to decide what to do
+if [ $1 == "dims" ]
+	then 
+#Output dimentions
+#Nested loop to get rows x cols
+#Outer loop goes through number of rows
+	#echo "$#"
+	if [[ $# -gt 2 ]]
+	then
+	   echo "Too many arguments." >&2
+	   exit 1
+	fi
+
+	if [[ $# -eq 1 ]]
+		then
+	   	tempMatrix="tempMatrix"
+	   	cat > $tempMatrix
+	
+	
+	
+		while read myLine
+		do
+
+	   	#Inner loop Checks first line for number of Columns in matrix
+	   	if [ $numCols == 0 ]	
+	   	then
+      	      		for i in $myLine
+	   		do
+	      			((numCols += 1))
+	   		done
+	  	fi
+
+
+   		(( numRows += 1))
+		done < $tempMatrix
+		echo "$numRows $numCols"	
+     
+ 	else
+
+	while read myLine
+	do
+	   if [ $numCols == 0 ]
+	   then
+	      for i in $myLine
+	      do
+		 ((numCols += 1))
+	      done
+	   fi
+	   ((numRows += 1))
+	done < $2
+
+	echo "$numRows $numCols"
+	fi
+
+	#rm -f tempMatrix
+
+elif [ $1 == "transpose" ]
+then
+   if [ $# -ge 3 ]
+   then
+     echo "Invalid number of arguments." >&2
+     exit 1
+   fi
+
+   if [ $# == 1 ]
+   then
+      	tempMatrix="tempMatrix"
+	cat > $tempMatrix
+
+	while read myLine
+	do
+	   if [ $numCols == 0 ]
+	   then
+	      for i in $myLine
+	      do
+		 ((numCols += 1))
+	      done
+	   fi
+
+	   ((numRows += 1))
+	done < $tempMatrix
+
+	currentCol=1
+	tempCol="tempCol"
+	tempRow="tempRow"
+	tempTran="tempTran"
+	revRow="revRow"
+	finalTran="finalTran"
+	tran="tran"
+	> tempCol
+	> tempRow
+	> tempTran
+	> revRow
+	> finalTran
+	> tran
+	myLine="$tempMatrix"
+	while [[ "$currentCol" -le "$numCols" ]]
+	do
+	   	#echo "Cutting character $currentCol"
+		cut -f $currentCol $myLine > $tempCol
+		#echo "Cut character $currentCol"
+		cat $tempCol | tr '\n' '\t' > "$tempRow"
+		echo >> "$tempRow"
+
+		#Flip the array 
+		rev "$tempRow" > "$revRow"
+		
+		
+		cut -c 2- $revRow > $tempTran
+		
+		#rev "$tempTran" > "$finalTran"
+
+		cat $tempTran >> "$tran"
+		
+		rev "$tran" > "$finalTran"
+
+		(( currentCol += 1 ))
+		
+	done	
+	cat $finalTran
+	#trap "rm -f tempMatrix tempCol tempRow tempTran revRow finalTran tran" INT HUP TERM
+	exit 0
+   fi
+
+	while read myLine
+	do
+	   if [ $numCols == 0 ]
+	   then
+	      for i in $myLine
+	      do
+		 ((numCols += 1))
+	      done
+	   fi
+
+	   ((numRows += 1))
+	done < $2
+
+	currentCol=1
+	tempCol="tempCol"
+	tempRow="tempRow"
+	tempTran="tempTran"
+	revRow="revRow"
+	finalTran="finalTran"
+	tran="tran"
+	> tempCol
+	> tempRow
+	> tempTran
+	> revRow
+	> finalTran
+	> tran
+	myLine="$2"
+	while [[ "$currentCol" -le "$numCols" ]]
+	do
+	   	#echo "Cutting character $currentCol"
+		cut -f $currentCol $myLine > $tempCol
+		#echo "Cut character $currentCol"
+		cat $tempCol | tr '\n' '\t' > "$tempRow"
+		echo >> "$tempRow"
+
+		#Flip the array 
+		rev "$tempRow" > "$revRow"
+		
+		
+		cut -c 2- $revRow > $tempTran
+		
+		#rev "$tempTran" > "$finalTran"
+
+		cat $tempTran >> "$tran"
+		
+		rev "$tran" > "$finalTran"
+
+		(( currentCol += 1 ))
+
+	done
+	cat $finalTran
+	cat $finalTran > "$2"
+	
+	#trap "rm -f tempCol tempRow tempTran revRow finalTran tran" INT HUP TERM
+	
+elif [ $1 == "mean" ]
+then
+   #echo "$#"
+   if [ $# -gt "2" ]
+   then
+      echo "Too many args." >&2
+      exit 1
+   fi
+
+   if [ $# -eq "1" ]
+   then
+	tempMatrix="tempMatrix"
+	cat > $tempMatrix
+
+	 while read myLine
+	do
+		if [ $numCols == 0 ]
+		then
+			for i in $myLine
+			do
+			((numCols += 1))
+	     		done
+		fi
+		((numRows += 1))
+	done < $tempMatrix
+
+	currentCol=0
+	tempRow="tempRow"
+	tempCol="tempCol"
+	myLine="$2"
+	> tempRow
+	> tempCol
+	while read -a myLine
+   	do
+	   for ((idx=0; idx<numCols; idx++))
+	   do
+	      sumArr[idx]=$(( ${sumArr[idx]} + ${myLine[idx]} ))
+	   done
+		
+	done < $tempMatrix
+	
+	for ((idx=0; idx<numCols; idx++))
+	do 
+	   rnd=$(( ${sumArr[idx]} > 0 ))
+	   #sumArr[idx]=$((${sumArr[idx]} / $numRows ))
+	   sumArr[idx]=$(( ( ${sumArr[idx]} +  ($numRows / 2 ) * ( ( $rnd ) * 2 - 1 ) ) / $numRows ))	
+	done
+
+	
+	for i in ${sumArr[@]}
+	do
+	   	echo $i >> $tempCol
+	done
+	
+	#cat $tempCol
+
+	cat $tempCol | tr '\n' '\t' > "$tempRow"
+	echo >> "$tempRow"
+	temp2="temp2"
+	temp3="temp3"
+	temp4="temp4"
+	temp5="temp5"
+	> temp2
+	> temp3
+	> temp4
+	> temp5
+	rev "$tempRow" > "$temp2"
+       	cut -c 2- $temp2 > $temp3
+	cat $temp3 >> "$temp4"
+	rev "$temp4" > "$temp5"	
+	cat $temp5
+	
+	#trap "rm -f tempMatrix tempCol tempRow temp2 temp3 temp4 temp5" INT HUP TERM
+	exit 0
+   fi   
+     while read myLine
+	do
+		if [ $numCols == 0 ]
+		then
+			for i in $myLine
+			do
+			((numCols += 1))
+	     		done
+		fi
+		((numRows += 1))
+	done < $2
+
+	currentCol=0
+	tempRow="tempRow"
+	tempCol="tempCol"
+	myLine="$2"
+	> tempRow
+	> tempCol
+	while read -a myLine
+   	do
+	   for ((idx=0; idx<=numCols-1; idx++))
+	   do
+	      sumArr[idx]=$(( ${sumArr[idx]} + ${myLine[idx]} ))
+	   done
+		
+	done < $2
+	
+	for ((idx=0; idx<=numCols-1; idx++))
+	do
+	   rnd=$(( ${sumArr[idx]} > 0 ))
+
+	   #sumArr[idx]=$((${sumArr[idx]} / $numRows ))
+	   sumArr[idx]=$(( ( ${sumArr[idx]} +  ($numRows / 2 ) * ( ( $rnd ) * 2 - 1 ) ) / $numRows ))	
+	done
+
+	
+	for i in ${sumArr[@]}
+	do
+	   	echo $i >> $tempCol
+	done
+	
+	#cat $tempCol
+
+	cat $tempCol | tr '\n' '\t' > "$tempRow"
+	echo >> "$tempRow"
+	temp2="temp2"
+	temp3="temp3"
+	temp4="temp4"
+	temp5="temp5"
+	> temp2
+	> temp3
+	> temp4
+	> temp5
+	rev "$tempRow" > "$temp2"
+       	cut -c 2- $temp2 > $temp3
+	cat $temp3 >> "$temp4"
+	rev "$temp4" > "$temp5"	
+	cat $temp5
+  	 
+	#trap "rm -f tempCol tempRow temp2 temp3 temp4 temp5" INT HUP TERM
+
+elif [ $1 == "add" ]
+then
+   if [[ $# -ne 3 ]]
+   then
+      echo "Not enough args" >&2
+      exit 1
+   fi
+	matrixOne="$2"
+	matrixTwo="$3"
+	numRowsOne=0
+	numRowsTwo=0
+	numColsOne=0
+	numColsTwo=0
+	
+	#Count Rows x Cols for M1
+	while read myLineOne
+	do
+	   if [ $numColsOne == 0 ]
+	  	then
+		for i in $myLineOne
+		do
+		   ((numColsOne += 1))
+		done
+	   fi
+	   ((numRowsOne += 1))
+
+	done < $matrixOne
+	
+	#Count Rows x Cols for M2
+	while read myLineTwo
+	do
+	   if [ $numColsTwo == 0 ]
+	   then
+	      for i in $myLineTwo
+	      do
+		 ((numColsTwo += 1))
+	      done
+	   fi
+	   ((numRowsTwo += 1))
+	
+	done < $matrixTwo
+	#echo "M1 Cols:$numColsOne\tM1 Rows:$numRowsOne"
+	#echo "M2 Cols:$numColsTwo\tM2 Rows:$numRowsTwo"
+
+	#Compare the two
+	if [[ $numColsOne -ne $numColsTwo ]]
+	then
+	   echo "Invalid matricies: Matricies must have the same number of rows and columns." >&2
+	   exit 1
+	fi
+	if [[ $numRowsOne -ne $numRowsTwo ]]
+	then
+	   echo "Invalid matricies: Matricies must have the same number of rows and columns." >&2
+	   exit 1
+	fi
+	
+	tempRow1="tempRow1"
+	tempRow2="tempRow2"
+	tempMatrix="tempMatrix"
+	tmpmtrx="tmpmtrx"
+	output="output"
+	> tempRow1
+	> tempRow2
+	> tempMatrix
+	> tmpmtrx
+	> output
+	while read -a line1 <&3 && read -a line2 <&4
+   	do
+	   for ((idx=0; idx<numColsOne; idx++))
+	   do
+	      sumArr[idx]=$(( ${line1[idx]} + ${line2[idx]} ))
+	   done 
+	   
+	   for i in ${sumArr[@]}
+	   do
+	     echo "$i" >> "$tempMatrix" 
+	   done
+
+	   cat $tempMatrix | tr '\n' '\t' > "$tmpmtrx"
+	echo >> "$tmpmtrx"
+	temp2="temp2"
+	temp3="temp3"
+	temp4="temp4"
+	temp5="temp5"
+	> temp2
+	> temp3
+	> temp4
+	> temp5
+	rev "$tmpmtrx" > "$temp2"
+       	cut -c 2- $temp2 > $temp3
+	cat $temp3 >> "$temp4"
+	rev "$temp4" > "$temp5"	
+	cat  $temp5
+
+
+
+	> tempMatrix
+	#trap "rm -f tempRow1 tempRow2 tempMatrix tmpmtrx output temp2 temp3 temp4 temp5" INT HUP TERM 
+	done 3<$2 4<$3	  
+elif [ $1 == "multiply" ]
+then
+     if [[ $# -ne 3 ]]
+   then
+      echo "Not enough args" >&2
+      exit 1
+   fi
+	matrixOne="$2"
+	matrixTwo="$3"
+	numRowsOne=0
+	numRowsTwo=0
+	numColsOne=0
+	numColsTwo=0
+	
+	#Count Rows x Cols for M1
+	while read myLineOne
+	do
+	   if [ $numColsOne == 0 ]
+	  	then
+		for i in $myLineOne
+		do
+		   ((numColsOne += 1))
+		done
+	   fi
+	   ((numRowsOne += 1))
+
+	done < $matrixOne
+	
+	#Count Rows x Cols for M2
+	while read myLineTwo
+	do
+	   if [ $numColsTwo == 0 ]
+	   then
+	      for i in $myLineTwo
+	      do
+		 ((numColsTwo += 1))
+	      done
+	   fi
+	   ((numRowsTwo += 1))
+	
+	done < $matrixTwo
+	
+	
+	if [[ $numColsOne -ne $numRowsTwo ]]
+   	then
+	  echo "Invalid matrix dimensions." >&2
+	  exit 1 
+	fi
+     	
+	#tranpose m2
+	currentCol=1
+	tempCol="tempCol"
+	tempRow="tempRow"
+	tempTran="tempTran"
+	revRow="revRow"
+	finalTran="finalTran"
+	tran="tran"
+	tM2="tM2"
+	> tempCol
+	> tempRow
+	> tempTran
+	> revRow
+	> finalTran
+	> tran
+	> transposedM2
+	myLine="$3"
+	while [[ "$currentCol" -le "$numColsTwo" ]]
+	do
+	   	#echo "Cutting character $currentCol"
+		cut -f $currentCol $myLine > $tempCol
+		#echo "Cut character $currentCol"
+		cat $tempCol | tr '\n' '\t' > "$tempRow"
+		echo >> "$tempRow"
+
+		#Flip the array 
+		rev "$tempRow" > "$revRow"
+		
+		
+		cut -c 2- $revRow > $tempTran
+		
+		#rev "$tempTran" > "$finalTran"
+
+		cat $tempTran >> "$tran"
+		
+		rev "$tran" > "$finalTran"
+
+		(( currentCol += 1 ))
+
+	done
+	cat $finalTran > "$tM2"
+	#cat $tM2
+	#now multiply the matricies
+	
+	tempRow1="tempRow1"
+	tempRow2="tempRow2"
+	tempMatrix="tempMatrix"
+	tmpmtrx="tmpmtrx"
+	output="output"
+	> tempRow1
+	> tempRow2
+	> tempMatrix
+	> tmpmtrx
+	> output
+
+	row=0
+	col=0
+
+
+	while read -a line1 
+   	do
+	   while read -a line2
+	   do
+		
+	      #multiply a1*b1, a2*b2, etc and place into array
+	      for ((idx=0; idx<numColsOne; idx++))
+	      do
+		 multArr[idx]=$(( ${line1[idx]} * ${line2[idx]} ))
+	      done
+
+	      #sum up array to get value at R(line1) x C(line2)
+	      sum=0
+	      for ((idx=0; idx<numColsOne; idx++))
+	      do
+		sum=$(( $sum + ${multArr[idx]} ))
+	      done
+	      echo "$sum" >> "$tempRow1"
+	      cat $tempRow1 | tr '\n' '\t' > "$tempMatrix"
+	      #echo "Row:$row"
+	      #echo "Col:$col"
+	  
+	      
+	   done < $tM2
+	   cat $tempMatrix > "$tmpmtrx"
+	   echo >> "$tmpmtrx"
+	 # cat  $tmpmtrx
+
+	   #get rid of trailing tabs
+	temp2="temp2"
+	temp3="temp3"
+	temp4="temp4"
+	temp5="temp5"
+	> temp2
+	> temp3
+	> temp4
+	> temp5
+	rev "$tmpmtrx" > "$temp2"
+       	cut -c 2- $temp2 > $temp3
+	cat $temp3 >> "$temp4"
+	rev "$temp4" > "$temp5"	
+	cat $temp5
+
+
+	   > tempRow1
+	done < $2i
+
+	#trap "rm -f tM2 tempCol tempRow tempTran revRow finalRow tran transposedM2 tempRow1 tempRow2 tmpmtrx output temp2 temp3 temp4 temp5" INT HUP TERM
+     else
+	echo "bad command." >&2
+	exit 1
+fi
